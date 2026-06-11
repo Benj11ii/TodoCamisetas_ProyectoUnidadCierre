@@ -1,0 +1,291 @@
+openapi: 3.0.0
+info:
+  title: TodoCamisetas API
+  description: Documentación oficial de la API de TodoCamisetas para la gestión de stock e integración con clientes B2B.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+    description: Servidor de desarrollo local (Docker)
+
+paths:
+  /camisetas:
+    get:
+      summary: Obtener el catálogo completo de camisetas
+      tags:
+        - Camisetas
+      responses:
+        200:
+          description: Listado de camisetas obtenido con éxito.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Camiseta'
+
+    post:
+      summary: Registrar una nueva camiseta en el stock
+      tags:
+        - Camisetas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CamisetaInput'
+      responses:
+        201:
+          description: Registro exitoso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        400:
+          description: Solicitud incorrecta (faltan campos obligatorios).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /camisetas/{id}:
+    get:
+      summary: Consultar una camiseta específica (con precio dinámico y tallas)
+      tags:
+        - Camisetas
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID numérico de la camiseta.
+          schema:
+            type: integer
+        - name: cliente_id
+          in: query
+          required: false
+          description: Nombre comercial del cliente (ej. 90minutos) para calcular el precio dinámico.
+          schema:
+            type: string
+      responses:
+        200:
+          description: Detalle de la camiseta con precio calculado en tiempo real.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CamisetaDetalle'
+        400:
+          description: ID de camiseta no válido.
+        404:
+          description: Camiseta no encontrada.
+
+    put:
+      summary: Actualizar una camiseta existente
+      tags:
+        - Camisetas
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CamisetaInput'
+      responses:
+        200:
+          description: Actualización exitosa.
+        404:
+          description: Camiseta no encontrada.
+
+    delete:
+      summary: Eliminar una camiseta del stock
+      tags:
+        - Camisetas
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Camiseta eliminada con éxito.
+        404:
+          description: Camiseta no encontrada.
+
+  /clientes:
+    get:
+      summary: Listar todos los clientes B2B registrados
+      tags:
+        - Clientes
+      responses:
+        200:
+          description: Listado de clientes comerciales obtenido con éxito.
+
+    post:
+      summary: Registrar un nuevo cliente B2B comercial
+      tags:
+        - Clientes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClienteInput'
+      responses:
+        201:
+          description: Cliente registrado exitosamente.
+        400:
+          description: Categoría no válida o datos requeridos incompletos.
+
+  /clientes/{id}:
+    delete:
+      summary: Eliminar un cliente comercial
+      tags:
+        - Clientes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Cliente eliminado exitosamente.
+        400:
+          description: Restricción de integridad - El cliente tiene camisetas asociadas y no puede eliminarse.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /camisetas/{id}/tallas:
+    get:
+      summary: Obtener las tallas asociadas a una camiseta específica
+      tags:
+        - Tallas (Relaciones M:N)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Lista de tallas asociadas.
+        404:
+          description: Camiseta no encontrada.
+
+    post:
+      summary: Asociar una talla a una camiseta
+      tags:
+        - Tallas (Relaciones M:N)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [talla_id]
+              properties:
+                talla_id:
+                  type: integer
+                  example: 2
+      responses:
+        201:
+          description: Talla asociada de manera exitosa.
+        400:
+          description: No se pudo asociar la talla (parámetros inválidos o relación ya existente).
+
+  /camisetas/{id}/tallas/{talla_id}:
+    delete:
+      summary: Eliminar la asociación de una talla con la camiseta
+      tags:
+        - Tallas (Relaciones M:N)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: talla_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Asociación de talla eliminada exitosamente.
+
+components:
+  schemas:
+    Camiseta:
+      type: object
+      properties:
+        id: { type: integer, example: 1 }
+        titulo: { type: string, example: "Camiseta Local Selección Chilena 2026" }
+        club: { type: string, example: "Selección Chilena" }
+        pais: { type: string, example: "Chile" }
+        tipo: { type: string, example: "Local" }
+        color: { type: string, example: "Rojo" }
+        precio: { type: integer, example: 45000 }
+        precio_oferta: { type: integer, example: 35000 }
+        detalles: { type: string, example: "Edición especial Copa América" }
+        codigo_producto: { type: string, example: "SCL2026L" }
+
+    CamisetaInput:
+      type: object
+      required: [titulo, club, pais, tipo, color, precio, codigo_producto]
+      properties:
+        titulo: { type: string, example: "Camiseta Local Selección Chilena" }
+        club: { type: string, example: "Selección Chilena" }
+        pais: { type: string, example: "Chile" }
+        tipo: { type: string, example: "Local" }
+        color: { type: string, example: "Rojo" }
+        precio: { type: integer, example: 45000 }
+        precio_oferta: { type: integer, example: 35000 }
+        detalles: { type: string, example: "Edición especial" }
+        codigo_producto: { type: string, example: "SCL2026L" }
+
+    CamisetaDetalle:
+      allOf:
+        - $ref: '#/components/schemas/Camiseta'
+        - type: object
+          properties:
+            precio_final: { type: integer, example: 35000 }
+            tallas:
+              type: array
+              items:
+                type: object
+                properties:
+                  id: { type: integer, example: 2 }
+                  nombre: { type: string, example: "M" }
+
+    ClienteInput:
+      type: object
+      required: [nombre_comercial, rut, direccion, categoria, contacto]
+      properties:
+        nombre_comercial: { type: string, example: "90minutos" }
+        rut: { type: string, example: "76.123.456-K" }
+        direccion: { type: string, example: "Av. Providencia 1234, Santiago" }
+        categoria: { type: string, enum: [Regular, Preferencial], example: "Preferencial" }
+        contacto: { type: string, example: "Matías López - compras@90minutos.cl" }
+        porcentaje_oferta: { type: number, format: float, example: 15.00 }
+
+    ErrorResponse:
+      type: object
+      properties:
+        error: { type: string, example: "Descripción del error ocurrido en la API." }
+
+    MessageResponse:
+      type: object
+      properties:
+        message: { type: string, example: "Operación realizada de manera exitosa." }

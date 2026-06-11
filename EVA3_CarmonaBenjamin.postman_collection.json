@@ -1,0 +1,132 @@
+{
+  "info": {
+    "_postman_id": "2a000937-0583-496f-8809-62c49eea0b26",
+    "name": "EVA3_CarmonaBenjamin",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54687632",
+    "_collection_link": "https://go.postman.co/collection/54687632-2a000937-0583-496f-8809-62c49eea0b26?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "http://localhost:8080/api/camisetas",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"titulo\": \"Camiseta Local Selección Chilena 2026\",\r\n    \"club\": \"Selección Chilena\",\r\n    \"pais\": \"Chile\",\r\n    \"tipo\": \"Local\",\r\n    \"color\": \"Rojo\",\r\n    \"precio\": 45000,\r\n    \"precio_oferta\": 35000,\r\n    \"detalles\": \"Edición especial Copa América\",\r\n    \"codigo_producto\": \"SCL2026L\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/camisetas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "camisetas"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost:8080/api/clientes",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"nombre_comercial\": \"90minutos\",\r\n    \"rut\": \"76.123.456-K\",\r\n    \"direccion\": \"Av. Providencia 1234, Santiago\",\r\n    \"categoria\": \"Preferencial\",\r\n    \"contacto\": \"Matías López - compras@90minutos.cl\",\r\n    \"porcentaje_oferta\": 15.00\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/clientes",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "clientes"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost:8080/api/clientes",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/clientes",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "clientes"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost:8080/api/camisetas/1/tallas",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"talla_id\": 2\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/camisetas/1/tallas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "camisetas",
+            "1",
+            "tallas"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
